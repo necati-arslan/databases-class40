@@ -1,6 +1,7 @@
 const { MongoClient, ServerApiVersion } = require("mongodb");
 
 const { seedDatabase } = require("./seedDatabase.js");
+require("dotenv").config();
 
 async function createEpisodeExercise(client) {
   /**
@@ -12,9 +13,30 @@ async function createEpisodeExercise(client) {
    */
 
   // Write code that will add this to the collection!
+  const bobRossCollection = await client
+    .db("databaseWeek3")
+    .collection("bob_ross_episodes");
+
+  const result = await bobRossCollection.insertOne({
+    episode: "S09E13",
+    title: "MOUNTAIN HIDE-AWAY",
+    elements: [
+      "CIRRUS",
+      "CLOUDS",
+      "CONIFER",
+      "DECIDIOUS",
+      "GRASS",
+      "MOUNTAIN",
+      "MOUNTAINS",
+      "RIVER",
+      "SNOWY_MOUNTAIN",
+      "TREE",
+      "TREES",
+    ],
+  });
 
   console.log(
-    `Created season 9 episode 13 and the document got the id ${"TODO: fill in variable here"}`
+    `Created season 9 episode 13 and the document got the id ${result.insertedId}`
   );
 }
 
@@ -25,27 +47,36 @@ async function findEpisodesExercises(client) {
    */
 
   // Find the title of episode 2 in season 2 [Should be: WINTER SUN]
+  const bobRossCollection = await client
+    .db("databaseWeek3")
+    .collection("bob_ross_episodes");
 
-  console.log(
-    `The title of episode 2 in season 2 is ${"TODO: fill in variable here"}`
-  );
+  const result1 = await bobRossCollection.findOne({ episode: "S02E02" });
+
+  console.log(`The title of episode 2 in season 2 is ${result1.title}`);
 
   // Find the season and episode number of the episode called "BLACK RIVER" [Should be: S02E06]
+  const result2 = await bobRossCollection.findOne({ title: "BLACK RIVER" });
 
   console.log(
-    `The season and episode number of the "BLACK RIVER" episode is ${"TODO: fill in variable here"}`
+    `The season and episode number of the "BLACK RIVER" episode is ${result2.episode}`
   );
 
   // Find all of the episode titles where Bob Ross painted a CLIFF [Should be: NIGHT LIGHT, EVENING SEASCAPE, SURF'S UP, CLIFFSIDE, BY THE SEA, DEEP WILDERNESS HOME, CRIMSON TIDE, GRACEFUL WATERFALL]
+  const result3 = await bobRossCollection.find({ elements: "CLIFF" }).toArray();
+  const cliffResult = result3.map((e) => e.title);
 
-  console.log(
-    `The episodes that Bob Ross painted a CLIFF are ${"TODO: fill in variable here"}`
-  );
+  console.log(`The episodes that Bob Ross painted a CLIFF are ${cliffResult}`);
 
   // Find all of the episode titles where Bob Ross painted a CLIFF and a LIGHTHOUSE [Should be: NIGHT LIGHT]
 
+  const result4 = await bobRossCollection
+    .find({ $and: [{ elements: "CLIFF", elements: "LIGHTHOUSE" }] })
+    .toArray();
+  const cliffLightResult = result4.map((e) => e.title);
+
   console.log(
-    `The episodes that Bob Ross painted a CLIFF and a LIGHTHOUSE are ${"TODO: fill in variable here"}`
+    `The episodes that Bob Ross painted a CLIFF and a LIGHTHOUSE are ${cliffLightResult}`
   );
 }
 
@@ -58,17 +89,29 @@ async function updateEpisodeExercises(client) {
    */
 
   // Episode 13 in season 30 should be called BLUE RIDGE FALLS, yet it is called BLUE RIDGE FALLERS now. Fix that
+  const bobRossCollection = await client
+    .db("databaseWeek3")
+    .collection("bob_ross_episodes");
+
+  const result1 = await bobRossCollection.updateOne(
+    { episode: "S30E13" },
+    { $set: { title: "BLUE RIDGE FALLS" } }
+  );
 
   console.log(
-    `Ran a command to update episode 13 in season 30 and it updated ${"TODO: fill in variable here"} episodes`
+    `Ran a command to update episode 13 in season 30 and it updated ${result1.modifiedCount} episodes`
   );
 
   // Unfortunately we made a mistake in the arrays and the element type called 'BUSHES' should actually be 'BUSH' as sometimes only one bush was painted.
   // Update all of the documents in the collection that have `BUSHES` in the elements array to now have `BUSH`
   // It should update 120 episodes!
+  const result2 = await bobRossCollection.updateMany(
+    { elements: "BUSHES" },
+    { $set: { elements: "BUSH" } }
+  );
 
   console.log(
-    `Ran a command to update all the BUSHES to BUSH and it updated ${"TODO: fill in variable here"} episodes`
+    `Ran a command to update all the BUSHES to BUSH and it updated ${result2.modifiedCount} episodes`
   );
 }
 
@@ -78,8 +121,14 @@ async function deleteEpisodeExercise(client) {
    * This is episode 14 in season 31. Please remove it and verify that it has been removed!
    */
 
+  const bobRossCollection = await client
+    .db("databaseWeek3")
+    .collection("bob_ross_episodes");
+
+  const result1 = await bobRossCollection.deleteOne({ episode: "S31E14" });
+
   console.log(
-    `Ran a command to delete episode and it deleted ${"TODO: fill in variable here"} episodes`
+    `Ran a command to delete episode and it deleted ${result1.deletedCount} episodes`
   );
 }
 
