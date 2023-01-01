@@ -107,7 +107,8 @@ async function updateEpisodeExercises(client) {
   // It should update 120 episodes!
   const result2 = await bobRossCollection.updateMany(
     { elements: "BUSHES" },
-    { $set: { elements: "BUSH" } }
+    { $set: { "elements.$[elem]": "BUSH" } },
+    { arrayFilters: [{ elem: "BUSHES" }] }
   );
 
   console.log(

@@ -13,7 +13,7 @@ member table:
 member_id PK | member_name | member_address
 
 dinner table:
-dinner_id PK | dinner_date | venue_id FK | food_id FK
+dinner_id PK | dinner_date | venue_id FK
 
 Venue table:
 venue_id PK | venue_description
@@ -23,3 +23,7 @@ food_id PK | food_description
 
 relation_table:
 id | dinner_id FK | member_id
+
+relation_dinner_food
+
+id | dinner_id FK | food_id FK
